@@ -1,0 +1,13 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+*.swp
+*.swo
+.cursor/
