@@ -242,8 +242,42 @@
     });
   }
 
+  // Si una caché antigua inyectó un superform de Clientify en el documento
+  // principal (aparece tras el footer, sin lightbox), lo eliminamos.
+  function removeOrphanClientifyEmbeds() {
+    var selectors = [
+      'body > [id^="_form_embedformselectorc"]',
+      'body > div[class^="id1"]',
+      'body > div[class^="id2"]',
+      'main ~ [id^="_form_embedformselectorc"]',
+      'footer ~ [id^="_form_embedformselectorc"]',
+      'body > iframe.commonembedclientify',
+      'body > .form_embed_clientify_embed_form'
+    ];
+    selectors.forEach(function (selector) {
+      document.querySelectorAll(selector).forEach(function (node) {
+        if (node.closest && node.closest(".report-modal")) return;
+        node.remove();
+      });
+    });
+  }
+
   activateFooterLinks();
   activateContactForm();
   activateReportForms();
   activateCarousel();
+  removeOrphanClientifyEmbeds();
+  window.setTimeout(removeOrphanClientifyEmbeds, 1000);
+  window.setTimeout(removeOrphanClientifyEmbeds, 3000);
+  window.setTimeout(removeOrphanClientifyEmbeds, 6000);
+
+  if (typeof MutationObserver === "function") {
+    var orphanObserver = new MutationObserver(function () {
+      removeOrphanClientifyEmbeds();
+    });
+    orphanObserver.observe(document.body, { childList: true });
+    window.setTimeout(function () {
+      orphanObserver.disconnect();
+    }, 15000);
+  }
 })();

@@ -1,12 +1,22 @@
 DirectoryIndex index.html
 Options -Indexes
 
+# El proxy/nginx del hosting cachea .js/.css 1 año y puede ignorar estas
+# reglas. Por eso index.html referencia styles-v6.css y script-clientify-v6.js
+# con ?v=... (URL nueva = caché nueva). HTML sí debe revalidarse siempre.
+
 <IfModule mod_headers.c>
+  <FilesMatch "\.(?:html)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+
+  <FilesMatch "^(styles-v6\.css|script-clientify-v6\.js)$">
+    Header set Cache-Control "public, max-age=86400, must-revalidate"
+  </FilesMatch>
+
   <FilesMatch "\.(?:jpg|jpeg|png|svg|woff2|otf|pdf)$">
     Header set Cache-Control "public, max-age=604800"
   </FilesMatch>
-  <FilesMatch "\.(?:css|js|html)$">
-    Header set Cache-Control "no-cache, must-revalidate"
-  </FilesMatch>
 </IfModule>
-
